@@ -29,14 +29,13 @@ def earlyStop(pat, loss_num=0):
     )
 
 
-def kaggleCsv(preds, onehoted=False):
+def kaggleCsv(preds,columns,id_start=1):
     if onehoted:
         preds = np.argmax(preds, axis=1)
-    id=[i+1 for i in range(len(preds))]
-    submission_df = pd.DataFrame(
-        {
-            "ImageId": id,  # Column 'Id' is usually present in Kaggle competition test datasets
-            "Label": preds,  # Replace 'Target' with the appropriate column name for your predictions
-        }
-    )
+    id=[i+id_start for i in range(len(preds))]
+    d={}
+    d["id"]=id
+    for i in range(len(columns):
+        d[columns[i]]=preds[columns[i]]
+    submission_df = pd.DataFrame(d)
     submission_df.to_csv("submission.csv", index=False)
