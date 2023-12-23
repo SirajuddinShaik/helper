@@ -29,7 +29,7 @@ def earlyStop(pat, loss_num=0):
     )
 
 
-def kaggleCsv(preds, columns, id_start=1, onehoted=False):
+def kaggleCsv1(preds, columns, id_start=1, onehoted=False):
     if onehoted:
         preds = np.argmax(preds, axis=1)
     id = [i + id_start for i in range(len(preds))]
@@ -39,3 +39,16 @@ def kaggleCsv(preds, columns, id_start=1, onehoted=False):
         d[columns[i]] = preds[columns[i]]
     submission_df = pd.DataFrame(d)
     submission_df.to_csv("submission.csv", index=False)
+
+
+def kaggleCsv(preds, columns, id_start=1, onehoted=False):
+    id = [i + id_start for i in range(len(preds))]
+    if onehoted:
+        preds = np.argmax(preds, axis=1)
+    d = {"id": id}
+    for i in range(preds.shape[1]):
+        col_name = columns[i]
+        d[col_name] = preds[:, i]
+
+    submission_df = pd.DataFrame(d)
+    submission_df.to_csv("submission1.csv", index=False)
