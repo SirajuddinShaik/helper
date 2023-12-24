@@ -150,11 +150,12 @@ def one_hot_or_not(
 
             if len(v[0]) <= max_hot:
                 one[col] = v
+                print(f"{col} : {len(v[0])} unique values")
             elif df[col].apply(lambda x: type(x) == str).any():
                 print(f"{col} : {len(v[0])} unique values")
             else:
                 normal.append(col)
-                print(f"{col} : {len(v[0])} unique values")
+                print(f"{col} : {len(v[0])}")
 
     x_one_hot = np.hstack(list(one.values())).astype("float32")
     x = np.hstack((x_one_hot, df[normal].values))
