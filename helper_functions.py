@@ -94,7 +94,7 @@ def callbacksV1(
         )
     elif name == "autoreducer":
         return tf.keras.callbacks.ReduceLROnPlateau(
-            monitor="val_loss",  # Metric to monitor for plateau
+            monitor=monitor,  # Metric to monitor for plateau
             factor=factor,  # Factor by which to reduce the learning rate
             patience=patience,  # Number of epochs to wait before reducing the learning rate
             min_lr=min_lr,  # Minimum learning rate to reach
