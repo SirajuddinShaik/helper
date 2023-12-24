@@ -71,6 +71,7 @@ def callbacksV1(
     save_weights_only=True,
     min_lr=0.00001,
     factor=0.2,
+    drop_count=10,
 ):
     if name == "earlystop":
         # losses = ["val_loss", "val_accuracy", "val_mse", "val_mae"]
@@ -104,7 +105,7 @@ def callbacksV1(
 
         def lr_schedule(epoch):
             # Example schedule: decrease learning rate by a factor of 10 every 20 epochs
-            lr = factor * (0.1 ** (epoch // width))
+            lr = factor * (0.1 ** (epoch // drop_count))
             return lr
 
         return tf.keras.callbacks.LearningRateScheduler(lr_schedule)
@@ -138,28 +139,30 @@ import pandas as pd
 import numpy as np
 
 
-def one_hot_or_not(
+def one_hot_or_not1(
     df, label=None, label_one_hot=False, removed_cols=["id"], max_hot=10
 ):
     one = {}
     normal = []
-
+    count = 0
     for col in df.columns:
         if col not in removed_cols:
             v = pd.get_dummies(df[col]).values
 
             if len(v[0]) <= max_hot:
                 one[col] = v
-                print(f"{col} : {len(v[0])} unique values")
+                print(f"{col} : {len(v[0])} <= {max_hot}")
             elif df[col].apply(lambda x: type(x) == str).any():
-                print(f"{col} : {len(v[0])} unique values")
+                print(f"{col} : {len(v[0])} unique strings")
             else:
                 normal.append(col)
                 print(f"{col} : {len(v[0])}")
+                v = ["a"]
+            count += len(v[0])
 
     x_one_hot = np.hstack(list(one.values())).astype("float32")
     x = np.hstack((x_one_hot, df[normal].values))
-
+    print(f"Count is {count}")
     if label and label in df.columns:
         if label_one_hot:
             y = pd.get_dummies(df[label]).values
