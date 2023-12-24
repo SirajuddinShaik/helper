@@ -143,20 +143,22 @@ def one_hot_or_not(
 ):
     one = {}
     normal = []
-    for i in df.columns:
-        if i not in removed_cols:
-            v = pd.get_dummies(df[i]).values
+
+    for col in df.columns:
+        if col not in removed_cols:
+            v = pd.get_dummies(df[col]).values
+
             if len(v[0]) <= max_hot:
-                one[i] = v
-
-            elif df[i].apply(lambda x: type(x) == str).any():
-                print(f"{i} : {len(v[0])} unique values")
+                one[col] = v
+            elif df[col].apply(lambda x: type(x) == str).any():
+                print(f"{col} : {len(v[0])} unique values")
             else:
-                normal.append(i)
-                print(f"{i} :{len(v[0])}")
+                normal.append(col)
+                print(f"{col} : {len(v[0])} unique values")
 
-    x = np.hstack(list(one.values())).astype("float32")
-    x = np.hstack((x, df[normal].values))
+    x_one_hot = np.hstack(list(one.values())).astype("float32")
+    x = np.hstack((x_one_hot, df[normal].values))
+
     if label and label in df.columns:
         if label_one_hot:
             y = pd.get_dummies(df[label]).values
