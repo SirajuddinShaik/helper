@@ -138,29 +138,31 @@ import pandas as pd
 import numpy as np
 
 
-def one_hot_or_not(df, label=None, removed_cols=["id"], max_hot=10):
+def one_hot_or_not(
+    df, label=None, label_one_hot=False, removed_cols=["id"], max_hot=10
+):
     one = {}
     normal = []
+    for i in df.columns:
+        if i not in removed_cols:
+            v = pd.get_dummies(df[i]).values
+            if len(v[0]) <= max_hot:
+                one[i] = v
 
-    for col in df.columns:
-        if col not in removed_cols:
-            unique_values = df[col].nunique()
-
-            if unique_values < max_hot:
-                v = pd.get_dummies(df[col]).values
-                one[col] = v
+            elif df[i].apply(lambda x: type(x) == str).any():
+                print(f"{i} : {len(v[0])} unique values")
             else:
-                normal.append(col)
+                normal.append(i)
+                print(f"{i} :{len(v[0])}")
 
-            print(f"{col} : {unique_values} unique values")
-
-    one_hot_array = np.hstack(list(one.values()))
-    x = np.hstack((one_hot_array, df[normal].values)).astype("float32")
-
+    x = np.hstack(list(one.values())).astype("float32")
+    x = np.hstack((x, df[normal].values))
     if label and label in df.columns:
-        y = pd.get_dummies(df[label]).values
+        if label_one_hot:
+            y = pd.get_dummies(df[label]).values
+        else:
+            y = df[label].values.astype("float32")
         return x, y
     elif label:
         print(f"Label column '{label}' not found in DataFrame.")
-
     return x
