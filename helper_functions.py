@@ -139,11 +139,12 @@ import pandas as pd
 import numpy as np
 
 
-def one_hot_or_not1(
+def one_hot_or_not(
     df, label=None, label_one_hot=False, removed_cols=["id"], max_hot=10
 ):
     one = {}
     normal = []
+    removed_cols.append(label)
     count = 0
     for col in df.columns:
         if col not in removed_cols:
