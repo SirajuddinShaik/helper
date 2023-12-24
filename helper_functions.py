@@ -132,3 +132,35 @@ def useTpu():
 
     print("Number of devices: {}".format(strategy.num_replicas_in_sync))
     return strategy
+
+
+import pandas as pd
+import numpy as np
+
+
+def one_hot_or_not(df, label=None, removed_cols=["id"], max_hot=10):
+    one = {}
+    normal = []
+
+    for col in df.columns:
+        if col not in removed_cols:
+            unique_values = df[col].nunique()
+
+            if unique_values < max_hot:
+                v = pd.get_dummies(df[col]).values
+                one[col] = v
+            else:
+                normal.append(col)
+
+            print(f"{col} : {unique_values} unique values")
+
+    one_hot_array = np.hstack(list(one.values()))
+    x = np.hstack((one_hot_array, df[normal].values)).astype("float32")
+
+    if label and label in df.columns:
+        y = pd.get_dummies(df[label]).values
+        return x, y
+    elif label:
+        print(f"Label column '{label}' not found in DataFrame.")
+
+    return x
