@@ -173,3 +173,31 @@ def one_hot_or_not(
     elif label:
         print(f"Label column '{label}' not found in DataFrame.")
     return x
+
+
+from google.colab import files
+import json
+import boto3
+
+
+def connectAWS():
+    # Request file upload
+    uploaded = files.upload()
+
+    # Check if the file is uploaded
+    if "aws_config.json" in uploaded:
+        # Load AWS configuration from uploaded JSON file
+        with open("aws_config.json", "r") as file:
+            aws_config = json.load(file)
+
+        # Configure boto3 with temporary credentials
+        session = boto3.Session(
+            aws_access_key_id=aws_config["aws_access_key_id"],
+            aws_secret_access_key=aws_config["aws_secret_access_key"],
+            region_name=aws_config["region"],
+        )
+
+        print("Sucessfully Connected!")
+        return session.client("s3")
+    else:
+        print("Error: Not Connected!")
