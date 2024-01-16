@@ -201,3 +201,28 @@ def connectAWS():
         return session.client("s3")
     else:
         print("Error: Not Connected!")
+
+
+from google.colab import files
+import os
+
+def kaggle_setup():
+    # Upload Kaggle API key file
+    uploaded_files = files.upload()
+    
+    for file_name in uploaded_files.keys():
+        destination_path = os.path.join('/root/.kaggle', file_name)
+        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+        with open(destination_path, 'wb') as f:
+            f.write(uploaded_files[file_name])
+
+    # Set appropriate permissions for the Kaggle API key file
+    os.chmod(destination_path, 600)
+
+def kaggle_dataset_download(competition_name):
+    # Download dataset from Kaggle competition
+    os.system(f'kaggle competitions download -c {competition_name}')
+
+# Example usage:
+# download_kaggle_competition_data('house-prices-advanced-regression-techniques')
+
