@@ -177,10 +177,11 @@ def one_hot_or_not(
 
 from google.colab import files
 import json
-import boto3
 
 
 def connectAWS():
+    
+    import boto3
     # Request file upload
     uploaded = files.upload()
 
