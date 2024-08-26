@@ -226,4 +226,16 @@ def kaggle_dataset_download(competition_name):
 
 # Example usage:
 # download_kaggle_competition_data('house-prices-advanced-regression-techniques')
+def extract_gz(input_file, output_file):
+    import gzip
+    """Extracts a .gz file.
+
+    Args:
+        input_file: The path to the .gz file.
+        output_file: The path to the extracted file.
+    """
+
+    with gzip.open(input_file, 'rb') as f_in:
+        with open(output_file, 'wb') as f_out:
+            f_out.write(f_in.read())
 
