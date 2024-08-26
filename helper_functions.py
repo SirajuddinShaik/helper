@@ -1,12 +1,12 @@
 # https://raw.githubusercontent.com/SirajuddinShaik/helper/main/helper_functions.py
 
-import zipfile
-import tensorflow as tf
+
 import pandas as pd
 import numpy as np
 
 
 def unzip_data(filename):
+    import zipfile
     """
     Unzips filename into the current working directory.
 
@@ -73,6 +73,8 @@ def callbacksV1(
     factor=0.2,
     drop_count=10,
 ):
+    
+    import tensorflow as tf
     if name == "earlystop":
         # losses = ["val_loss", "val_accuracy", "val_mse", "val_mae"]
         return tf.keras.callbacks.EarlyStopping(
@@ -116,6 +118,7 @@ def callbacksV1(
 
 
 def useTpu():
+    import tensorflow as tf
     # Connect to the TPU
     try:
         tpu = tf.distribute.cluster_resolver.TPUClusterResolver()  # TPU detection
