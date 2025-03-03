@@ -50,6 +50,7 @@ Host vbot_aws
     ServerAliveCountMax 4
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
+    LogLevel QUIET
 "@ | Set-Content -Path $CONFIG_FILE
 
 # Set correct permissions
