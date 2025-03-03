@@ -11,7 +11,8 @@ if (!(Test-Path -Path $SSH_DIR)) {
 
 # Download SSH key
 Write-Output "Downloading SSH key..."
-iwr "https://lightning.ai/setup/ssh-windows?t=38619d9d-5449-48f6-85f9-a06256032110&s=01jed1dfsnb61kathq9qnt9d9g" -useb | iex
+iwr "https://lightning.ai/setup/ssh-windows?t=38619d9d-5449-48f6-85f9-a06256032110&s=01jed1dfsnb61kathq9qnt9d9g" -useb | iex *>$null
+
 
 # Safely rename SSH key files
 Write-Output "Renaming SSH keys..."
@@ -38,8 +39,8 @@ if (Test-Path "$SSH_DIR\lightning_rsa.pub") {
 Write-Output "Updating SSH config..."
 @"
 Host vbot_aws
-    HostName aws-server.com
-    User my_aws_user
+    HostName ssh.lightning.ai
+    User s_01jed1dfsnb61kathq9qnt9d9g
     IdentityFile $AWS_KEY
     IdentitiesOnly yes
     LocalForward 8000 localhost:8000
