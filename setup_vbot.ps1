@@ -1,5 +1,5 @@
-# Define SSH directory
-$SSH_DIR = "$env:USERPROFILE\.ssh"
+# Define paths
+$SSH_DIR = "$HOME\.ssh"
 $CONFIG_FILE = "$SSH_DIR\config"
 $AWS_KEY = "$SSH_DIR\aws_rsa"
 
@@ -9,39 +9,38 @@ if (!(Test-Path -Path $SSH_DIR)) {
     New-Item -ItemType Directory -Path $SSH_DIR -Force | Out-Null
 }
 
-# Download SSH key from Lightning AI
-Write-Output "Downloading SSH key from AWS ssh..."
-Invoke-WebRequest -Uri "https://lightning.ai/setup/ssh-windows?t=38619d9d-5449-48f6-85f9-a06256032110&s=01jed1dfsnb61kathq9qnt9d9g" -UseBasicParsing | Invoke-Expression
+# Download SSH key
+Write-Output "Downloading SSH key..."
+iwr "https://lightning.ai/setup/ssh-windows?t=38619d9d-5449-48f6-85f9-a06256032110&s=01jed1dfsnb61kathq9qnt9d9g" -useb | iex
 
-# Rename SSH keys from 'lightning_rsa' to 'aws_rsa'
+# Rename SSH key files
 Write-Output "Renaming SSH keys..."
 if (Test-Path "$SSH_DIR\lightning_rsa") {
-    Rename-Item -Path "$SSH_DIR\lightning_rsa" -NewName "aws_rsa" -Force
+    Rename-Item "$SSH_DIR\lightning_rsa" -NewName "aws_rsa"
 }
 if (Test-Path "$SSH_DIR\lightning_rsa.pub") {
-    Rename-Item -Path "$SSH_DIR\lightning_rsa.pub" -NewName "aws_rsa.pub" -Force
+    Rename-Item "$SSH_DIR\lightning_rsa.pub" -NewName "aws_rsa.pub"
 }
 
-# Update SSH config
+# Update SSH Config
 Write-Output "Updating SSH config..."
-$configContent = @"
+@"
 Host vbot_aws
-    HostName ssh.lightning.ai
-    User s_01jed1dfsnb61kathq9qnt9d9g
+    HostName aws-server.com
+    User my_aws_user
     IdentityFile $AWS_KEY
     IdentitiesOnly yes
     LocalForward 8000 localhost:8000
     ServerAliveInterval 15
     ServerAliveCountMax 4
     StrictHostKeyChecking no
-    UserKnownHostsFile NUL
-"@
-$configContent | Set-Content -Path $CONFIG_FILE -Encoding UTF8
+    UserKnownHostsFile /dev/null
+"@ | Set-Content -Path $CONFIG_FILE
 
 # Set correct permissions
 Write-Output "Setting permissions..."
-icacls $CONFIG_FILE /inheritance:r /grant:r "$env:USERNAME:(R,W)"
-icacls $AWS_KEY /inheritance:r /grant:r "$env:USERNAME:(R,W)"
-icacls "$AWS_KEY.pub" /inheritance:r /grant:r "$env:USERNAME:(R)"
+icacls $CONFIG_FILE /inheritance:r /grant:r "$env:USERNAME:F" | Out-Null
+icacls $AWS_KEY /inheritance:r /grant:r "$env:USERNAME:F" | Out-Null
+icacls "$AWS_KEY.pub" /inheritance:r /grant:r "$env:USERNAME:R" | Out-Null
 
 Write-Output "✅ Setup complete! You can now connect using: ssh vbot_aws"
