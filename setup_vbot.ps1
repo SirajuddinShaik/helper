@@ -54,7 +54,8 @@ icacls "$AWS_KEY.pub" /inheritance:r /grant:r "$env:USERNAME:R" | Out-Null
 
 Write-Output "[✅] Setup complete! You can now connect using: ssh vbot_aws"
 
-# ---- SSH Wrapper Function ---- #
+# Define the function content
+$FunctionContent = @"
 function ssh-vbot {
     Write-Output "[🔍] Initiating Secure SSH Session..."
     Start-Sleep -Milliseconds 800
@@ -81,5 +82,25 @@ function ssh-vbot {
     ssh -q vbot_aws
 }
 
-# Create an alias for `ssh vbot_aws` to automatically trigger ssh-vbot
-Set-Alias ssh vbot_aws ssh-vbot
+Set-Alias ssh-vbot ssh-vbot
+"@
+
+# Check if the PowerShell profile exists, create if not
+if (!(Test-Path $PROFILE)) {
+    Write-Output "[📂] PowerShell profile not found. Creating new profile..."
+    New-Item -Path $PROFILE -ItemType File -Force | Out-Null
+}
+
+# Append function to PowerShell profile if not already added
+if (!(Select-String -Path $PROFILE -Pattern "function ssh-vbot" -Quiet)) {
+    Write-Output "[📝] Adding ssh-vbot function to PowerShell profile..."
+    Add-Content -Path $PROFILE -Value "`n$FunctionContent"
+    Write-Output "[✅] ssh-vbot function added successfully!"
+} else {
+    Write-Output "[⚡] ssh-vbot function already exists in profile."
+}
+
+# Reload profile
+. $PROFILE
+Write-Output "[🚀] Profile updated! You can now use 'ssh-vbot' in any PowerShell session."
+
