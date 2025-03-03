@@ -13,12 +13,22 @@ if (!(Test-Path -Path $SSH_DIR)) {
 Write-Output "Downloading SSH key..."
 iwr "https://lightning.ai/setup/ssh-windows?t=38619d9d-5449-48f6-85f9-a06256032110&s=01jed1dfsnb61kathq9qnt9d9g" -useb | iex
 
-# Rename SSH key files
+# Rename SSH key files safely
 Write-Output "Renaming SSH keys..."
+
+# Handle private key
 if (Test-Path "$SSH_DIR\lightning_rsa") {
+    if (Test-Path "$AWS_KEY") {
+        Remove-Item "$AWS_KEY" -Force
+    }
     Rename-Item "$SSH_DIR\lightning_rsa" -NewName "aws_rsa"
 }
+
+# Handle public key
 if (Test-Path "$SSH_DIR\lightning_rsa.pub") {
+    if (Test-Path "$AWS_KEY.pub") {
+        Remove-Item "$AWS_KEY.pub" -Force
+    }
     Rename-Item "$SSH_DIR\lightning_rsa.pub" -NewName "aws_rsa.pub"
 }
 
