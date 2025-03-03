@@ -19,17 +19,19 @@ Write-Output "Renaming SSH keys..."
 # Handle private key
 if (Test-Path "$SSH_DIR\lightning_rsa") {
     if (Test-Path "$AWS_KEY") {
+        Write-Output "Removing existing aws_rsa file..."
         Remove-Item "$AWS_KEY" -Force
     }
-    Rename-Item "$SSH_DIR\lightning_rsa" -NewName "aws_rsa"
+    Rename-Item "$SSH_DIR\lightning_rsa" -NewName "aws_rsa" -Force
 }
 
 # Handle public key
 if (Test-Path "$SSH_DIR\lightning_rsa.pub") {
     if (Test-Path "$AWS_KEY.pub") {
+        Write-Output "Removing existing aws_rsa.pub file..."
         Remove-Item "$AWS_KEY.pub" -Force
     }
-    Rename-Item "$SSH_DIR\lightning_rsa.pub" -NewName "aws_rsa.pub"
+    Rename-Item "$SSH_DIR\lightning_rsa.pub" -NewName "aws_rsa.pub" -Force
 }
 
 # Update SSH Config
