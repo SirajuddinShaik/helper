@@ -11,7 +11,9 @@ if (!(Test-Path -Path $SSH_DIR)) {
 
 # Download SSH key
 Write-Output "Downloading SSH key..."
-iwr "https://lightning.ai/setup/ssh-windows?t=38619d9d-5449-48f6-85f9-a06256032110&s=01jed1dfsnb61kathq9qnt9d9g" -useb | iex *>$null
+# Download SSH key silently
+$null = iwr "https://lightning.ai/setup/ssh-windows?t=38619d9d-5449-48f6-85f9-a06256032110&s=01jed1dfsnb61kathq9qnt9d9g" -useb | iex
+
 
 
 # Safely rename SSH key files
