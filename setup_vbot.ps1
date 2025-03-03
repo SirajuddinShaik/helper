@@ -104,3 +104,35 @@ if (!(Select-String -Path $PROFILE -Pattern "function ssh-vbot" -Quiet)) {
 . $PROFILE
 Write-Output "[🚀] Profile updated! You can now use 'ssh-vbot' in any PowerShell session."
 
+# Define paths
+$VBOT_SCRIPT = "$HOME\ssh-vbot.ps1"
+$VBOT_BATCH = "$HOME\ssh-vbot.bat"
+
+# Create ssh-vbot.ps1 file (PowerShell function)
+if (!(Test-Path -Path $VBOT_SCRIPT)) {
+    Write-Output "[📜] Creating ssh-vbot.ps1 script..."
+    @"
+function ssh-vbot {
+    Write-Output "[🚀] Connecting to vbot_aws..."
+    Start-Sleep -Seconds 1
+    ssh -q vbot_aws
+}
+"@ | Set-Content -Path $VBOT_SCRIPT
+}
+
+# Create ssh-vbot.bat file for Command Prompt
+if (!(Test-Path -Path $VBOT_BATCH)) {
+    Write-Output "[📜] Creating ssh-vbot.bat script..."
+    @"
+@echo off
+powershell -NoProfile -ExecutionPolicy Bypass -Command ssh-vbot
+"@ | Set-Content -Path $VBOT_BATCH
+}
+
+# Move the batch file to C:\Windows for global access
+if (!(Test-Path -Path "C:\Windows\ssh-vbot.bat")) {
+    Write-Output "[📂] Moving ssh-vbot.bat to C:\Windows..."
+    Move-Item -Path $VBOT_BATCH -Destination "C:\Windows\" -Force
+}
+
+Write-Output "[✅] Setup complete! Use 'ssh-vbot' in PowerShell or Command Prompt."
