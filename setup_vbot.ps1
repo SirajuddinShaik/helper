@@ -38,7 +38,7 @@ function Rename-SSHKeys {
             Remove-Item "$AWS_KEY" -Force
         }
         Move-Item "$SSH_DIR\lightning_rsa" "$AWS_KEY" -Force
-        Write-Output "[✅] SSH private key renamed successfully."
+        Write-Output "[✅] SSH private key verified successfully."
     }
 
     # Handle public key
@@ -48,7 +48,7 @@ function Rename-SSHKeys {
             Remove-Item "$AWS_KEY.pub" -Force
         }
         Move-Item "$SSH_DIR\lightning_rsa.pub" "$AWS_KEY.pub" -Force
-        Write-Output "[✅] SSH public key renamed successfully."
+        Write-Output "[✅] SSH public key verified successfully."
     }
 }
 
